@@ -9,16 +9,13 @@ from pyzbar.pyzbar import decode
 # ================================
 # CONFIGURACIÓN DEL SCRIPT
 # ================================
-
-# Nombre base para los documentos extraídos
 BASE_NAME = "XXX-NOV-2024-"
-# Número de serie inicial (se mostrará con ceros a la izquierda, por ejemplo, 00131)
 starting_serial = 131
-# Ancho de ceros para el número de serie (ej. 5 -> 00131)
 SERIAL_WIDTH = 5
-
-# DPI para convertir páginas a imágenes (puede ajustarse según calidad/resolución del PDF)
 DPI = 200
+
+# Configuración para Linux: se asume que poppler-utils está instalado y en el PATH
+POPPLER_PATH = None
 
 # ================================
 # FUNCIONES
@@ -47,9 +44,6 @@ def decode_qr_from_image(image: Image.Image) -> str:
         print("[DEBUG] No se detectó QR en la imagen")
     return ""
 
-# Ruta a Poppler (modifica según la ruta donde lo hayas extraído)
-POPPLER_PATH = r"C:\poppler\poppler-24.08.0\Library\bin"
-
 def process_pdf(pdf_path: str):
     """
     Recorre el PDF y clasifica las páginas en función del QR.
@@ -65,7 +59,11 @@ def process_pdf(pdf_path: str):
     print(f"[DEBUG] Total de páginas en el PDF: {total_pages}")
 
     print("[DEBUG] Convirtiendo páginas a imágenes...")
-    pages_images = convert_from_path(pdf_path, dpi=DPI, poppler_path=POPPLER_PATH)
+    # Convertir usando la ruta de poppler si está definida, sino se usa el PATH
+    if POPPLER_PATH:
+        pages_images = convert_from_path(pdf_path, dpi=DPI, poppler_path=POPPLER_PATH)
+    else:
+        pages_images = convert_from_path(pdf_path, dpi=DPI)
     print(f"[DEBUG] Conversión completada. Total de imágenes obtenidas: {len(pages_images)}")
 
     documents = []         # Cada elemento: (tipo_doc, [índices de páginas])
@@ -136,7 +134,7 @@ def extract_documents(pdf_path: str, base_name: str, starting_serial: int):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Uso: python extraer_documentos.py ruta_del_pdf")
+        print("Uso: python script.py ruta_del_pdf")
         sys.exit(1)
     
     pdf_path = sys.argv[1]
