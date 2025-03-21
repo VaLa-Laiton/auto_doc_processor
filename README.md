@@ -1,5 +1,3 @@
----
-
 ## 1. Construir la Imagen Docker
 
 Abre una terminal en la carpeta raíz del proyecto y ejecuta el siguiente comando para construir la imagen:
@@ -25,5 +23,3 @@ docker run --rm -v /home/usuario/pdf:/data auto_doc_processor /data/ejemplo.pdf
 > - `--rm` hace que el contenedor se elimine automáticamente al finalizar.  
 > - `-v /home/usuario/pdf:/data` monta el directorio local `/home/usuario/pdf` en el directorio `/data` del contenedor.  
 > - `/data/ejemplo.pdf` es la ruta del PDF dentro del contenedor que se pasa como argumento al script.
-
----
