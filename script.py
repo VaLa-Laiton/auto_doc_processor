@@ -11,7 +11,7 @@ from pyzbar.pyzbar import decode
 # ================================
 # CONFIGURACIÓN DEL SCRIPT
 # ================================
-BASE_NAME = "XXX-NOV-2024-"      # Prefijo base para los nombres de los PDFs extraídos
+BASE_NAME = "2Z-NOV-2024-"      # Prefijo base para los nombres de los PDFs extraídos
 starting_serial = 131            # Número de serie inicial
 SERIAL_WIDTH = 5                 # Ancho fijo para el número de serie (ej. 00131)
 DPI = 200                        # Resolución para la conversión de páginas a imágenes
@@ -146,7 +146,13 @@ def extract_documents(pdf_path: str, base_name: str, starting_serial: int):
         pdf_writer = PyPDF2.PdfWriter()
         for idx in page_indices:
             pdf_writer.add_page(pdf_reader.pages[idx])
-        file_name = f"{base_name}{str(current_serial).zfill(SERIAL_WIDTH)}.pdf"
+        
+        # Si el documento es "No Disponible", se agrega el sufijo al nombre del archivo
+        if doc_type == "no_disponible":
+            file_name = f"{base_name}{str(current_serial).zfill(SERIAL_WIDTH)} - No Disponible.pdf"
+        else:
+            file_name = f"{base_name}{str(current_serial).zfill(SERIAL_WIDTH)}.pdf"
+        
         file_path = os.path.join(output_dir, file_name)
         with open(file_path, "wb") as out_file:
             pdf_writer.write(out_file)
